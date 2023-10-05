@@ -14,6 +14,13 @@ public class Bot extends TelegramLongPollingBot {
             message.setChatId(update.getMessage().getChatId().toString());
             message.setText(update.getMessage().getText());
 
+//            switch (message.getText()) {
+//                case "/start" -> startAnswer(message);
+//                case "/help" -> helpAnswer(message);
+//                default -> {
+//                }
+//            }
+
             try {
                 execute(message); // Call method to send the message
             } catch (TelegramApiException e) {
@@ -21,6 +28,30 @@ public class Bot extends TelegramLongPollingBot {
             }
         }
     }
+
+//    public void startAnswer(SendMessage message){
+//        try {
+//            execute(SendMessage
+//                    .builder()
+//                    .chatId(message.getChatId())
+//                    .parseMode("Markdown")
+//                    .text("ПрЯ психологический бот").build());
+//        } catch(TelegramApiException e){
+//            e.printStackTrace();
+//        }
+//
+//    }
+//    public void helpAnswer(SendMessage message){
+//        try {
+//            execute(SendMessage
+//                    .builder()
+//                    .chatId(message.getChatId())
+//                    .parseMode("Markdown")
+//                    .text("Напиши /start для начала").build());
+//        } catch(TelegramApiException e){
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public String getBotUsername() {
