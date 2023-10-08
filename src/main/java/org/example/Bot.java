@@ -10,48 +10,48 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
-            message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(update.getMessage().getText());
+            String messageText = update.getMessage().getText();
+            long chatId = update.getMessage().getChatId();
 
-//            switch (message.getText()) {
-//                case "/start" -> startAnswer(message);
-//                case "/help" -> helpAnswer(message);
-//                default -> {
-//                }
-//            }
-
-            try {
-                execute(message); // Call method to send the message
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            switch (messageText) {
+                case "/start" -> startAnswer(chatId, update.getMessage().getChat().getFirstName());
+                case "/help" -> helpAnswer(chatId);
+                default -> { sendMessage(chatId, "прости, не знаю, что делать в такой ситуации");
+                }
             }
+
+//            try {
+//                execute(message); // Call method to send the message
+//            } catch (TelegramApiException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
-//    public void startAnswer(SendMessage message){
-//        try {
-//            execute(SendMessage
-//                    .builder()
-//                    .chatId(message.getChatId())
-//                    .parseMode("Markdown")
-//                    .text("ПрЯ психологический бот").build());
-//        } catch(TelegramApiException e){
-//            e.printStackTrace();
-//        }
-//
-//    }
-//    public void helpAnswer(SendMessage message){
-//        try {
-//            execute(SendMessage
-//                    .builder()
-//                    .chatId(message.getChatId())
-//                    .parseMode("Markdown")
-//                    .text("Напиши /start для начала").build());
-//        } catch(TelegramApiException e){
-//            e.printStackTrace();
-//        }
-//    }
+    public void startAnswer(long chatId, String name)
+    {
+        String answer = "Привет, " + name + ". Я бот психологической помощи! Начнём?";
+        sendMessage(chatId, answer);
+
+    }
+    public void helpAnswer(long chatId)
+    {
+        String answer = "Чтобы начать напиши /start";
+        sendMessage(chatId, answer);
+    }
+    private void sendMessage(long chatId, String textToSend)
+    {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(textToSend);
+
+        try{
+            execute(message);
+        }
+        catch (TelegramApiException e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String getBotUsername() {
