@@ -6,15 +6,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class StartCommand implements BotCommand {
     @Override
-    public void perform(SendMessage message, Bot bot){
-        String ans = "Прит!Я бот психологической помощи! Начнём?";
+    public void performCommand(SendMessage message, Bot bot){
+        System.out.println("i am here");
+        String ans = "Привет! Я бот психологической помощи! Начнём? Напиши /newnote";
         SendMessage answer = new SendMessage();
-        message.setChatId(message.getChatId());
-        message.setText(ans);
+        answer.setChatId(message.getChatId());
+        answer.setText(ans);
         try {
                bot.execute(answer);
         } catch (TelegramApiException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
     };
 }

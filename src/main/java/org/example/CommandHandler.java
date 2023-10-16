@@ -9,11 +9,15 @@ public class CommandHandler {
 
         HashMap<String, BotCommand> commandMap = new HashMap<>();
         commandMap.put("/start", new StartCommand());
+        commandMap.put("/newnote", new NewSession());
 
         for (String key : commandMap.keySet()) {
             if (key.equals(message.getText())) {
-                commandMap.get(key).perform(message, bot);
+                commandMap.get(key).performCommand(message, bot);
             }
+            else {
+            System.out.println("Invalid command");
+        }
         }
     }
 }

@@ -10,12 +10,13 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage();
-            message.setChatId(update.getMessage().getChatId());
+            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
+            message.setChatId(update.getMessage().getChatId().toString());
             message.setText(update.getMessage().getText());
 
             CommandHandler command = new CommandHandler();
             command.getCommand(message, this);
+
         }
     }
 
@@ -23,12 +24,12 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
         // геттер имени бота
-        return "psy_bot";
+        return "testBot";
     }
 
     @Override
     public String getBotToken() {
         // геттер токена бота
-        return "6445502252:AAEhiVq9eG0DAVKfMQyUqvayLt38XoFSe-I";
+        return "6643865749:AAGm8ngdjIgPqikcCLXburHc3JGBdHmcge0";
     }
 }
