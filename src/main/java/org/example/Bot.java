@@ -10,48 +10,15 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
+            SendMessage message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId());
+            message.setText(update.getMessage().getText());
 
-            switch (messageText) {
-                case "/start" -> startAnswer(chatId, update.getMessage().getChat().getFirstName());
-                case "/help" -> helpAnswer(chatId);
-                default -> { sendMessage(chatId, "прости, не знаю, что делать в такой ситуации");
-                }
-            }
-
-//            try {
-//                execute(message); // Call method to send the message
-//            } catch (TelegramApiException e) {
-//                e.printStackTrace();
-//            }
+            CommandHandler command = new CommandHandler();
+            command.getCommand(message, this);
         }
     }
 
-    public void startAnswer(long chatId, String name)
-    {
-        String answer = "Привет, " + name + ". Я бот психологической помощи! Начнём?";
-        sendMessage(chatId, answer);
-
-    }
-    public void helpAnswer(long chatId)
-    {
-        String answer = "Чтобы начать напиши /start";
-        sendMessage(chatId, answer);
-    }
-    private void sendMessage(long chatId, String textToSend)
-    {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(textToSend);
-
-        try{
-            execute(message);
-        }
-        catch (TelegramApiException e){
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public String getBotUsername() {
