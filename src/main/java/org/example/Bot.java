@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class Bot extends TelegramLongPollingBot {
+    CommandHandler command = new CommandHandler();
+
     @Override
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
@@ -14,9 +16,14 @@ public class Bot extends TelegramLongPollingBot {
             message.setChatId(update.getMessage().getChatId().toString());
             message.setText(update.getMessage().getText());
 
-            CommandHandler command = new CommandHandler();
             command.getCommand(message, this);
-
+        }
+        if (update.hasCallbackQuery()) {
+            var callbackQuery = update.getCallbackQuery();
+            SendMessage message = new SendMessage();
+            message.setChatId(callbackQuery.getMessage().getChatId());
+            message.setText(callbackQuery.getData());
+            command.getCommand(message, this);
         }
     }
 
