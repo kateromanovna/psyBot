@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class NewSession implements BotCommand {
+public class NewSession extends BotCommand {
     private LinkedHashMap<String, BiConsumer<SendMessage, Bot>> questions = new LinkedHashMap<>();
     private HashMap<String, Boolean> state = new HashMap<>();
     private HashMap<String, String> answers = new HashMap<>();
@@ -29,10 +29,7 @@ public class NewSession implements BotCommand {
     @Override
     public BiConsumer<SendMessage, Bot> performCommand(SendMessage message, Bot bot) {
         for (String key : questions.keySet()) {
-            System.out.println(key);
-            System.out.println(state.get(key));
             if (!state.get(key)) {
-                System.out.println("tuta");
                 currentKey = key;
                 questions.get(key).accept(message, bot);
                 return this::receiveEmotion;
@@ -42,52 +39,26 @@ public class NewSession implements BotCommand {
     }
 
     void receiveEmotion(SendMessage message, Bot bot) {
-
-        String ans = "Отлично";
-        System.out.println(message.getText());
-        System.out.println("функ получения");
-        SendMessage answer = new SendMessage();
-        answer.setChatId(message.getChatId());
-        answer.setText(ans);
-        sendAnswer(answer, bot);
+//        String ans = "Отлично";
+//        sendAnswer(message, ans, bot);
         answers.put(currentKey, message.getText());
         performCommand(message, bot);
-        //return null;
-    }
-
-    public void sendAnswer(SendMessage answer, Bot bot) {
-        try {
-            bot.execute(answer);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
     }
 
     public void getEmotions(SendMessage message, Bot bot) {
-        String ans = "Какую эмоцию ты чувствуешь?";
-        SendMessage answer = new SendMessage();
-        answer.setChatId(message.getChatId());
-        answer.setText(ans);
         state.put(currentKey, true);
-        System.out.println("функ эмоций");
-        sendInlineKeyboardEmotions(answer.getChatId(), bot);
+        sendInlineKeyboardEmotions(message.getChatId(), bot);
     }
 
     public void getIntencity(SendMessage message, Bot bot) {
-        String ans = "Оцени интенсивность по 10-бальной шкале";
-        SendMessage answer = new SendMessage();
-        answer.setChatId(message.getChatId());
-        answer.setText(ans);
         state.put(currentKey, true);
-        System.out.println("функ интенс");
-        sendInlineKeyboardIntencity(answer.getChatId(), bot);
+        sendInlineKeyboardIntencity(message.getChatId(), bot);
     }
-
 
     public void sendInlineKeyboardEmotions(String chatId, Bot bot) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Выберите эмоцию:");
+        message.setText("Какую эмоцию ты чувствуешь?:");
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> row1 = new ArrayList<>();

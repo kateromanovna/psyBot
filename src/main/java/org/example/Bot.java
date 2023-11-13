@@ -10,20 +10,19 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
+            SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
             message.setText(update.getMessage().getText());
 
-            command.getCommand(message, this);
+            command.handleCommand(message, this);
         }
         if (update.hasCallbackQuery()) {
             var callbackQuery = update.getCallbackQuery();
             SendMessage message = new SendMessage();
             message.setChatId(callbackQuery.getMessage().getChatId());
             message.setText(callbackQuery.getData());
-            command.getCommand(message, this);
+            command.handleCommand(message, this);
         }
     }
 
