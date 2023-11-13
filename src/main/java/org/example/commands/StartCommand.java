@@ -1,6 +1,7 @@
-package org.example;
+package org.example.commands;
 
 
+import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.function.BiConsumer;

@@ -1,4 +1,5 @@
-package org.example;
+package org.example.commands;
+import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 

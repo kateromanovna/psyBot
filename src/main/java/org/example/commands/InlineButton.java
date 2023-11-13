@@ -1,4 +1,4 @@
-package org.example;
+package org.example.commands;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 public class InlineButton extends InlineKeyboardButton {
     public InlineButton(String text, String callbackData) {

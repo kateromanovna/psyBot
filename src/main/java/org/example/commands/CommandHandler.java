@@ -1,9 +1,9 @@
-package org.example;
+package org.example.commands;
 
+import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class CommandHandler {
