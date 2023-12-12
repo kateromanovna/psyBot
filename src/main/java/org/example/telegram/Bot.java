@@ -1,5 +1,6 @@
 package org.example.telegram;
 
+import org.example.User.DataBase;
 import org.example.commands.CommandHandler;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class Bot extends TelegramLongPollingBot {
     CommandHandler command = new CommandHandler();
-
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {

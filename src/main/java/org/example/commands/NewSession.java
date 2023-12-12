@@ -1,11 +1,18 @@
 package org.example.commands;
 
+import org.apache.commons.io.FileUtils;
+import org.example.User.DataBase;
 import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,14 +24,33 @@ public class NewSession extends BotCommand {
     private HashMap<String, Boolean> state = new HashMap<>();
     private HashMap<String, String> answers = new HashMap<>();
     private String currentKey;
+    DataBase db = new DataBase();
+    List<String> lines;
 
     public NewSession() {
-        questions.put("Эмоция", this::getEmotions);
-        questions.put("Интенсивность", this::getIntencity);
-        state.put("Эмоция", false);
-        state.put("Интенсивность", false);
+        questions.put("emotion", this::getEmotions);
+        questions.put("intencity", this::getIntencity);
+        questions.put("Какое событие спровоцировало возникновение этой эмоции?", this::questions);
+        questions.put("Каковы мои интерпретации, допущения и предположения о  данном событии?", this::questions);
+        questions.put("Я воспринимаю это как угрозу? Какова вероятность, что это случится?", this::questions);
+        questions.put("Что  самое худшее может произойти? В чем возможная катастрофа? Как вы будете справляться с этим?", this::questions);
+        questions.put("Соответствует ли эмоция и/или ее сила реальным фактам?", this::questionsYesNo);
+        questions.put("Эффективно ли действие по эмоции?", this::questionsYesNo);
+        state.put("emotion", false);
+        state.put("intencity", false);
+        state.put("Какое событие спровоцировало возникновение этой эмоции?", false);
+        state.put("Каковы мои интерпретации, допущения и предположения о  данном событии?", false);
+        state.put("Я воспринимаю это как угрозу? Какова вероятность, что это случится?", false);
+        state.put("Что  самое худшее может произойти? В чем возможная катастрофа? Как вы будете справляться с этим?", false);
+        state.put("Соответствует ли эмоция и/или ее сила реальным фактам?", false);
+        state.put("Эффективно ли действие по эмоции?", false);
 
-
+        File file = new File("questionsText.txt");
+        try {
+            lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -33,15 +59,23 @@ public class NewSession extends BotCommand {
             if (!state.get(key)) {
                 currentKey = key;
                 questions.get(key).accept(message, bot);
-                return this::receiveEmotion;
+                return this::receiveAnswer;
             }
         }
+        sendAnswer(message, "Спасибо за ответы!", bot);
+        db.saveInDB(answers, message);
         return null;
     }
 
-    void receiveEmotion(SendMessage message, Bot bot) {
-//        String ans = "Отлично";
-//        sendAnswer(message, ans, bot);
+    void receiveAnswer(SendMessage message, Bot bot) {
+        if (currentKey.equals("intencity")) {
+            System.out.println("fuck yourself");
+            if (message.getText().equals("9") | message.getText().equals("10")){
+                System.out.println("fuck yourself 2 ");
+                new CrisisMode().performCommand(message, bot);
+
+            }
+        }
         answers.put(currentKey, message.getText());
         performCommand(message, bot);
     }
@@ -56,10 +90,26 @@ public class NewSession extends BotCommand {
         sendInlineKeyboardIntencity(message.getChatId(), bot);
     }
 
+    public void questions(SendMessage message, Bot bot) {
+
+
+        state.put(currentKey, true);
+        sendAnswer(message, currentKey, bot);
+    }
+
+    public void questionsYesNo(SendMessage message, Bot bot) {
+        state.put(currentKey, true);
+        sendInlineKeyboardYesOrNo(message.getChatId(), bot, currentKey);
+    }
+
+    public void suggestion(SendMessage message, Bot bot) {
+
+    }
+
     public void sendInlineKeyboardEmotions(String chatId, Bot bot) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Какую эмоцию ты чувствуешь?:");
+        message.setText(lines.get(0));
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> row1 = new ArrayList<>();
@@ -94,23 +144,42 @@ public class NewSession extends BotCommand {
     public void sendInlineKeyboardIntencity(String chatId, Bot bot) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Оцени интенсивность по 10-балльной шкале:");
+        message.setText(lines.get(1));
         InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> row1 = new ArrayList<>();
-        row1.add(new InlineButton("1", "callback_data_1"));
-        row1.add(new InlineButton("2", "callback_data_2"));
-        row1.add(new InlineButton("3", "callback_data_3"));
-        row1.add(new InlineButton("4", "callback_data_4"));
-        row1.add(new InlineButton("5", "callback_data_5"));
+        row1.add(new InlineButton("1", "1"));
+        row1.add(new InlineButton("2", "2"));
+        row1.add(new InlineButton("3", "3"));
+        row1.add(new InlineButton("4", "4"));
+        row1.add(new InlineButton("5", "5"));
         List<InlineKeyboardButton> row2 = new ArrayList<>();
-        row2.add(new InlineButton("6", "callback_data_6"));
-        row2.add(new InlineButton("7", "callback_data_7"));
-        row2.add(new InlineButton("8", "callback_data_8"));
-        row2.add(new InlineButton("9", "callback_data_9"));
-        row2.add(new InlineButton("10", "callback_data_10"));
+        row2.add(new InlineButton("6", "6"));
+        row2.add(new InlineButton("7", "7"));
+        row2.add(new InlineButton("8", "8"));
+        row2.add(new InlineButton("9", "9"));
+        row2.add(new InlineButton("10", "10"));
         keyboard.add(row1);
         keyboard.add(row2);
+        markupKeyboard.setKeyboard(keyboard);
+        message.setReplyMarkup(markupKeyboard);
+        try {
+            bot.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendInlineKeyboardYesOrNo(String chatId, Bot bot, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(text);
+        InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        row1.add(new InlineButton("Да", "Да"));
+        row1.add(new InlineButton("Нет", "Нет"));
+        keyboard.add(row1);
         markupKeyboard.setKeyboard(keyboard);
         message.setReplyMarkup(markupKeyboard);
         try {
