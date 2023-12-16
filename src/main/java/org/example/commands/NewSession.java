@@ -30,20 +30,21 @@ public class NewSession extends BotCommand {
     public NewSession() {
         questions.put("emotion", this::getEmotions);
         questions.put("intencity", this::getIntencity);
-        questions.put("Какое событие спровоцировало возникновение этой эмоции?", this::questions);
-        questions.put("Каковы мои интерпретации, допущения и предположения о  данном событии?", this::questions);
-        questions.put("Я воспринимаю это как угрозу? Какова вероятность, что это случится?", this::questions);
-        questions.put("Что  самое худшее может произойти? В чем возможная катастрофа? Как вы будете справляться с этим?", this::questions);
-        questions.put("Соответствует ли эмоция и/или ее сила реальным фактам?", this::questionsYesNo);
-        questions.put("Эффективно ли действие по эмоции?", this::questionsYesNo);
+        questions.put("question3", this::questions);
+        questions.put("question4", this::questions);
+        questions.put("question5", this::questions);
+        questions.put("question6", this::questions);
+        questions.put("accordance", this::questionsYesNo);
+        questions.put("effectivness", this::questionsYesNo);
+        state.put("CRISIS", false);
         state.put("emotion", false);
         state.put("intencity", false);
-        state.put("Какое событие спровоцировало возникновение этой эмоции?", false);
-        state.put("Каковы мои интерпретации, допущения и предположения о  данном событии?", false);
-        state.put("Я воспринимаю это как угрозу? Какова вероятность, что это случится?", false);
-        state.put("Что  самое худшее может произойти? В чем возможная катастрофа? Как вы будете справляться с этим?", false);
-        state.put("Соответствует ли эмоция и/или ее сила реальным фактам?", false);
-        state.put("Эффективно ли действие по эмоции?", false);
+        state.put("question3", false);
+        state.put("question4", false);
+        state.put("question5", false);
+        state.put("question6", false);
+        state.put("accordance", false);
+        state.put("effectivness", false);
 
         File file = new File("questionsText.txt");
         try {
@@ -56,13 +57,17 @@ public class NewSession extends BotCommand {
     @Override
     public BiConsumer<SendMessage, Bot> performCommand(SendMessage message, Bot bot) {
         for (String key : questions.keySet()) {
+            if (state.get("CRISIS")){
+                return null;
+            }
             if (!state.get(key)) {
                 currentKey = key;
                 questions.get(key).accept(message, bot);
                 return this::receiveAnswer;
             }
         }
-        sendAnswer(message, "Спасибо за ответы!", bot);
+        sendAnswer(message, lines.get(8), bot);
+        suggestion(message, bot);
         db.saveInDB(answers, message);
         return null;
     }
@@ -72,6 +77,7 @@ public class NewSession extends BotCommand {
             System.out.println("fuck yourself");
             if (message.getText().equals("9") | message.getText().equals("10")){
                 System.out.println("fuck yourself 2 ");
+                state.put("CRISIS", true);
                 new CrisisMode().performCommand(message, bot);
 
             }
@@ -91,19 +97,40 @@ public class NewSession extends BotCommand {
     }
 
     public void questions(SendMessage message, Bot bot) {
-
-
+        String answer = switch (currentKey) {
+            case "question3" -> lines.get(2);
+            case "question4" -> lines.get(3);
+            case "question5" -> lines.get(4);
+            case "question6" -> lines.get(5);
+            default -> "Произошла ошибка";
+        };
         state.put(currentKey, true);
-        sendAnswer(message, currentKey, bot);
+        sendAnswer(message, answer, bot);
     }
 
     public void questionsYesNo(SendMessage message, Bot bot) {
+        String answer = switch (currentKey) {
+            case "accordance" -> lines.get(6);
+            case "effectivness" -> lines.get(7);
+            default -> "Произошла ошибка";
+        };
         state.put(currentKey, true);
-        sendInlineKeyboardYesOrNo(message.getChatId(), bot, currentKey);
+        sendInlineKeyboardYesOrNo(message.getChatId(), bot, answer);
     }
 
     public void suggestion(SendMessage message, Bot bot) {
+        String answer;
+        if (answers.get("accordance").equals("Да") && answers.get("effectivness").equals("Да")){
+            answer = lines.get(9);
+        } else if (answers.get("accordance").equals("Да") && answers.get("effectivness").equals("Нет")) {
+            answer = lines.get(10);
+        } else if (answers.get("accordance").equals("Нет") && answers.get("effectivness").equals("Нет")) {
+            answer = lines.get(11);
+        } else if (answers.get("accordance").equals("Нет") && answers.get("effectivness").equals("Да")) {
+            answer = lines.get(12);
+        } else answer = "Произошла ошибка";
 
+        sendAnswer(message, answer, bot);
     }
 
     public void sendInlineKeyboardEmotions(String chatId, Bot bot) {

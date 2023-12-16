@@ -5,8 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.HashMap;
 
-// Эти методы все могут быть вызваны в любом классе по сути, но лучше создать отдельный класс
-//  с методами по работе с обьектами их созданием и сохранением
 public class DataBase {
 
     public static void saveInDB(HashMap<String, String> answers, SendMessage message) {
@@ -19,6 +17,12 @@ public class DataBase {
         entity.setChatId(message.getChatId());
         entity.setEmotion(answers.get("emotion"));
         entity.setIntensity(answers.get("intencity"));
+        entity.setQuestion3(answers.get("question3"));
+        entity.setQuestion4(answers.get("question4"));
+        entity.setQuestion5(answers.get("question5"));
+        entity.setQuestion6(answers.get("question6"));
+        entity.setAccordance(answers.get("accordance"));
+        entity.setEffectivness(answers.get("effectivness"));
 
         entityDao.saveOrUpdate(entity);
 
