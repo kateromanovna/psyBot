@@ -1,6 +1,4 @@
-package org.example.User;
-
-import org.hibernate.annotations.GenericGenerator;
+package org.example.user;
 
 import javax.persistence.*;
 

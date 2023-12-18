@@ -1,4 +1,4 @@
-package org.example.User;
+package org.example.user;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

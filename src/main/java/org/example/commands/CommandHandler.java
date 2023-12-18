@@ -1,10 +1,8 @@
 package org.example.commands;
 
-import org.example.User.DataBase;
 import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
@@ -16,6 +14,7 @@ public class CommandHandler {
         commandMap.put("/start", new StartCommand());
         commandMap.put("/newnote", new NewSession());
         commandMap.put("/help", new HelpCommand());
+        commandMap.put("/crisis", new CrisisMode());
     }
     public void handleCommand(SendMessage message, Bot bot){
 

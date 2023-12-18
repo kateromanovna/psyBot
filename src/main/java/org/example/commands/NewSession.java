@@ -1,7 +1,7 @@
 package org.example.commands;
 
 import org.apache.commons.io.FileUtils;
-import org.example.User.DataBase;
+import org.example.user.DataBase;
 import org.example.telegram.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -11,8 +11,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,24 +26,7 @@ public class NewSession extends BotCommand {
     List<String> lines;
 
     public NewSession() {
-        questions.put("emotion", this::getEmotions);
-        questions.put("intencity", this::getIntencity);
-        questions.put("question3", this::questions);
-        questions.put("question4", this::questions);
-        questions.put("question5", this::questions);
-        questions.put("question6", this::questions);
-        questions.put("accordance", this::questionsYesNo);
-        questions.put("effectivness", this::questionsYesNo);
-        state.put("CRISIS", false);
-        state.put("emotion", false);
-        state.put("intencity", false);
-        state.put("question3", false);
-        state.put("question4", false);
-        state.put("question5", false);
-        state.put("question6", false);
-        state.put("accordance", false);
-        state.put("effectivness", false);
-
+        initHashMaps();
         File file = new File("questionsText.txt");
         try {
             lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
@@ -69,6 +50,7 @@ public class NewSession extends BotCommand {
         sendAnswer(message, lines.get(8), bot);
         suggestion(message, bot);
         db.saveInDB(answers, message);
+        initHashMaps();
         return null;
     }
 
@@ -86,6 +68,25 @@ public class NewSession extends BotCommand {
         performCommand(message, bot);
     }
 
+    public void initHashMaps() {
+        questions.put("emotion", this::getEmotions);
+        questions.put("intencity", this::getIntencity);
+        questions.put("question3", this::questions);
+        questions.put("question4", this::questions);
+        questions.put("question5", this::questions);
+        questions.put("question6", this::questions);
+        questions.put("accordance", this::questionsYesNo);
+        questions.put("effectivness", this::questionsYesNo);
+        state.put("CRISIS", false);
+        state.put("emotion", false);
+        state.put("intencity", false);
+        state.put("question3", false);
+        state.put("question4", false);
+        state.put("question5", false);
+        state.put("question6", false);
+        state.put("accordance", false);
+        state.put("effectivness", false);
+    }
     public void getEmotions(SendMessage message, Bot bot) {
         state.put(currentKey, true);
         sendInlineKeyboardEmotions(message.getChatId(), bot);

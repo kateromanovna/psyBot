@@ -1,7 +1,6 @@
 package org.example.telegram;
 
 import org.apache.commons.io.FileUtils;
-import org.example.User.DataBase;
 import org.example.commands.CommandHandler;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
