@@ -48,10 +48,10 @@ public class CrisisMode extends BotCommand{
 
     public void questions(SendMessage message, Bot bot) {
         String answer = switch (currentKey) {
-            case "1" -> lines.get(0);
-            case "2" -> lines.get(1);
-            case "3" -> lines.get(2);
-            case "4" -> lines.get(3);
+            case "1" -> lines.get(0)+lines.get(1)+lines.get(2);
+            case "2" -> lines.get(3)+lines.get(4)+lines.get(5);
+            case "3" -> lines.get(6)+lines.get(7);
+            case "4" -> lines.get(8)+lines.get(9);
             default -> "Произошла ошибка";
         };
         sendAnswer(message, answer, bot);

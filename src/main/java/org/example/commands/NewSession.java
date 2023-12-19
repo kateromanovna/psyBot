@@ -56,9 +56,9 @@ public class NewSession extends BotCommand {
 
     void receiveAnswer(SendMessage message, Bot bot) {
         if (currentKey.equals("intencity")) {
-            System.out.println("fuck yourself");
+            System.out.println();
             if (message.getText().equals("9") | message.getText().equals("10")){
-                System.out.println("fuck yourself 2 ");
+                System.out.println();
                 state.put("CRISIS", true);
                 new CrisisMode().performCommand(message, bot);
 
