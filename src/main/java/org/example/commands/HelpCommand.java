@@ -7,7 +7,8 @@ import java.util.function.BiConsumer;
 
 public class HelpCommand extends BotCommand {
     public BiConsumer<SendMessage, Bot> performCommand(SendMessage message, Bot bot){
-        String ans = "Чтобы начать напиши /start,\nчтобы создать новую запись - /newnote,\nувидеть кризисный план - /crisis";
+        String ans = "Все команды бота:\n/start - начало работы,\n/newnote - создание новой записи," +
+                "\n/crisis - работа с кризисным планом";
         sendAnswer(message, ans, bot);
         return null;
     }
